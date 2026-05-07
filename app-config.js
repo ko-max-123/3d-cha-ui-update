@@ -1,3 +1,4 @@
 window.PHON_APP_CONFIG = {
-  modelType: '6men-model1'
+  modelType: '6men-model1',
+  keypadCharacters: 'ABCDEFGHKLMNOPRSTUVWXYZ'
 };
