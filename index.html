@@ -264,6 +264,7 @@
       z-index: 2;
       display: flex;
       justify-content: center;
+      align-items: center;
       gap: 8px;
       pointer-events: auto;
       touch-action: manipulation;
@@ -277,6 +278,32 @@
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.9);
       color: #111;
+      font-weight: bold;
+      touch-action: manipulation;
+    }
+    .vertical-rotation-controls {
+      position: absolute;
+      right: max(8px, env(safe-area-inset-right));
+      top: 50%;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transform: translateY(-50%);
+      pointer-events: auto;
+      touch-action: manipulation;
+      user-select: none;
+    }
+    .vertical-rotation-controls button {
+      min-width: 56px;
+      min-height: 44px;
+      margin: 0;
+      padding: 0 12px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #111;
+      font-size: 1.1rem;
       font-weight: bold;
       touch-action: manipulation;
     }
@@ -323,12 +350,24 @@
       }
       .rotation-controls {
         bottom: max(8px, env(safe-area-inset-bottom));
-        gap: 10px;
+        gap: 6px;
       }
       .rotation-controls button {
-        min-width: 64px;
-        min-height: 44px;
-        font-size: 1rem;
+        min-width: 0;
+        width: 64px;
+        min-height: 38px;
+        font-size: 0.95rem;
+      }
+      #autoRotateButton {
+        width: 96px;
+      }
+      .vertical-rotation-controls {
+        right: max(6px, env(safe-area-inset-right));
+        gap: 8px;
+      }
+      .vertical-rotation-controls button {
+        min-width: 56px;
+        min-height: 42px;
       }
     }
     @media (max-height: 700px) {
@@ -342,6 +381,13 @@
       }
       .letter-keypad button {
         min-height: 34px;
+      }
+      .rotation-controls button {
+        min-height: 34px;
+      }
+      .vertical-rotation-controls button {
+        min-width: 56px;
+        min-height: 38px;
       }
       #submitButton {
         min-height: 40px;
@@ -399,7 +445,7 @@
       text-align: center;
     }
   </style>
-  <script type="module" crossorigin src="./assets/main-Cpz6hWJY.js"></script>
+  <script type="module" crossorigin src="./assets/main-CTMhPnO5.js"></script>
 </head>
 <body>
   <div id="container">
@@ -488,6 +534,10 @@
           <button type="button" id="rotateLeftButton">←</button>
           <button type="button" id="autoRotateButton">自動回転</button>
           <button type="button" id="rotateRightButton">→</button>
+        </div>
+        <div class="vertical-rotation-controls" aria-label="上下回転操作">
+          <button type="button" id="rotateUpButton">↑</button>
+          <button type="button" id="rotateDownButton">↓</button>
         </div>
       </div>
       <div id="input-area">
