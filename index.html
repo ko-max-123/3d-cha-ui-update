@@ -144,6 +144,10 @@
       touch-action: none;
       overscroll-behavior: none;
       user-select: none;
+      cursor: grab;
+    }
+    #threejs-container.desktop-dragging {
+      cursor: grabbing;
     }
     #threejs-container canvas {
       position: absolute;
@@ -207,6 +211,22 @@
       padding: 0;
       margin: 0;
       border: 0;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      #userInput {
+        position: static;
+        opacity: 1;
+        pointer-events: auto;
+        width: 80%;
+        height: auto;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+      }
+      #answerDisplay,
+      #letterKeypad {
+        display: none !important;
+      }
     }
     .answer-display {
       min-height: 34px;
@@ -487,6 +507,7 @@
 </head>
 <body>
   <div id="container">
+    <!-- 研究用の同意画面・事前アンケートは現在使用しません。
     <div id="consent-screen" class="pre-screen">
       <div class="panel">
         <h1>研究アンケート</h1>
@@ -557,6 +578,7 @@
         <div id="surveyStatus" class="status-message"></div>
       </form>
     </div>
+    -->
 
     <div id="start-screen">
       <div style="text-align: center;">
@@ -584,7 +606,7 @@
       </div>
       <div id="input-area">
         <h2 id="instruction">見えた文字を入力してください</h2>
-        <input type="text" id="userInput" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text" readonly />
+        <input type="text" id="userInput" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text" maxlength="6" />
         <div id="answerDisplay" class="answer-display" aria-live="polite"></div>
         <button id="submitButton">送信</button>
         <div id="letterKeypad" class="letter-keypad" aria-label="文字入力ボタン">
@@ -598,6 +620,7 @@
       </div>
     </div>
 
+    <!-- テスト後アンケートは現在使用しません。
     <div id="post-survey-screen" class="pre-screen">
       <form id="postSurveyForm" class="panel">
         <h1>テスト後アンケート</h1>
@@ -676,6 +699,7 @@
         </div>
       </form>
     </div>
+    -->
 
     <div id="thank-you">
       <div>ご協力ありがとうございました。</div>
@@ -685,5 +709,46 @@
 
   <script src="./app-config.js"></script>
   <script src="./model-answers.js"></script>
+  <script>
+    // Desktop mouse input is translated to the touch gestures used by the 3D viewer.
+    (() => {
+      const viewer = document.getElementById('threejs-container');
+      if (!viewer) return;
+
+      let dragging = false;
+
+      const dispatchTouch = (type, points) => {
+        const event = new Event(type, { bubbles: true, cancelable: true });
+        Object.defineProperty(event, 'touches', {
+          value: points.map(({ x, y }) => ({ clientX: x, clientY: y }))
+        });
+        viewer.dispatchEvent(event);
+      };
+
+      viewer.addEventListener('mousedown', (event) => {
+        if (event.button !== 0 || event.target.closest('button')) return;
+        dragging = true;
+        viewer.classList.add('desktop-dragging');
+        dispatchTouch('touchstart', [{ x: event.clientX, y: event.clientY }]);
+      });
+
+      window.addEventListener('mousemove', (event) => {
+        if (!dragging) return;
+        dispatchTouch('touchmove', [{ x: event.clientX, y: event.clientY }]);
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (!dragging) return;
+        dragging = false;
+        viewer.classList.remove('desktop-dragging');
+        dispatchTouch('touchend', []);
+      });
+
+      viewer.addEventListener('wheel', (event) => {
+        event.preventDefault();
+        document.getElementById(event.deltaY < 0 ? 'zoomInButton' : 'zoomOutButton')?.click();
+      }, { passive: false });
+    })();
+  </script>
 </body>
 </html>
